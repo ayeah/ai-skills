@@ -7,6 +7,7 @@ AI skill 分享仓库，用于收集和管理自己编写的技能目录。每�
 ## Skill 列表
 
 - `agnes-image` 调用免费的 Agnes AI 的生图模型，生成需要的图片
+- `bandstock-diagnosis` A股/ETF 波段技术分析工具，涵盖 MA/MACD/RSI/布林带/KDJ 五大指标，输出支撑阻力位和操作建议
 
 ## 技能安装及使用说明
 
@@ -31,3 +32,4 @@ AI skill 分享仓库，用于收集和管理自己编写的技能目录。每�
 ## 目录结构
 
 - `agnes-image/` - 图片生成 skill，基于 Agnes AI 的图像生成 API。
+- `bandstock-diagnosis/` - 波段诊股 skill，A股/ETF 波段技术分析工具（MA/MACD/RSI/布林带/KDJ）。
