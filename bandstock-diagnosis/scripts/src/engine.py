@@ -105,13 +105,15 @@ def calc_indicators(df: pd.DataFrame):
     return result, None
 
 
-def calc_support_resistance(df: pd.DataFrame, indicators: dict) -> dict:
+def calc_support_resistance(df: pd.DataFrame, indicators: dict, realtime_price: float = None) -> dict:
     """
     计算支撑位与阻力位
     方法：斐波那契回撤 + 枢轴点 + 均线 + 布林带
+    realtime_price: 实时行情价格，优先使用；若无则取K线最后收盘价
     """
     closes = pd.Series(indicators["closes"])
-    recent_price = closes.iloc[-1]
+    kline_price = closes.iloc[-1]
+    recent_price = realtime_price if realtime_price is not None else kline_price
     recent_high = df["high"].max()
     recent_low = df["low"].min()
 
@@ -189,10 +191,13 @@ def calc_support_resistance(df: pd.DataFrame, indicators: dict) -> dict:
     }
 
 
-def calc_score(indicators: dict, df: pd.DataFrame = None) -> dict:
-    """波段综合评分系统（±10 分制）"""
+def calc_score(indicators: dict, df: pd.DataFrame = None, realtime_price: float = None) -> dict:
+    """波段综合评分系统（±10 分制）
+    realtime_price: 实时行情价格，优先使用；若无则取K线最后收盘价
+    """
     closes = pd.Series(indicators["closes"])
-    price = closes.iloc[-1]
+    kline_price = closes.iloc[-1]
+    price = realtime_price if realtime_price is not None else kline_price
     score = 0.0
     reasons = []
 
