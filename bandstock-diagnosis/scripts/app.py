@@ -76,8 +76,9 @@ def api_analyze():
         if err:
             return jsonify({"error": err}), 500
 
-        sr = calc_support_resistance(df, indicators)
-        scoring = calc_score(indicators)
+        rt_price = rt.get("price") if rt else None
+        sr = calc_support_resistance(df, indicators, realtime_price=rt_price)
+        scoring = calc_score(indicators, realtime_price=rt_price)
 
         last_price = indicators["closes"][-1] if indicators["closes"] else 0
         if rt is None:
@@ -172,7 +173,8 @@ def api_analyze_stream():
 
         # ── 阶段 4: 支撑/阻力 ──
         yield sse("progress", {"step": "sr", "msg": "⏳ 正在计算支撑位与阻力位（斐波那契 + 枢轴点 + 均线 + 布林带）...", "phase": "calc"})
-        sr = calc_support_resistance(df, indicators)
+        rt_price = rt.get("price") if rt else None
+        sr = calc_support_resistance(df, indicators, realtime_price=rt_price)
         yield sse("progress", {
             "step": "sr_done",
             "msg": f'✔ 支撑/阻力位计算完成：{len(sr.get("supports",[]))} 个支撑位，{len(sr.get("resistances",[]))} 个阻力位',
@@ -181,7 +183,7 @@ def api_analyze_stream():
 
         # ── 阶段 5: 评分 ──
         yield sse("progress", {"step": "score", "msg": "⏳ 正在生成综合评分与操作建议...", "phase": "score"})
-        scoring = calc_score(indicators)
+        scoring = calc_score(indicators, realtime_price=rt_price)
         s_val = scoring["score"]
         icon = "🟢" if s_val >= 3 else ("🟡" if s_val >= -3 else "🔴")
         yield sse("progress", {
